@@ -383,10 +383,7 @@ ds |>
   filter(epa >= 0) 
 ```
 
-```
-# Source:   lazy query [?? x 5]
-```
-indicates a `dbplyr` connection, prints 10 rows and the remaining dataset hasn't been pulled into memory yet!
+`lazy query [?? x 4]` indicates a `dbplyr` connection, prints 10 rows and the remaining dataset hasn't been pulled into memory yet!
 
 :::
 
