@@ -1,0 +1,39 @@
+---
+format: 
+  revealjs:
+    theme: ["theme/q-theme.scss"]
+    slide-number: c/t
+    logo: "https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.png"
+    footer: "[https://jthomasmock.github.io/arrow-dplyr](https://jthomasmock.github.io/arrow-dplyr)"
+    code-copy: true
+    center-title-slide: false
+highlight-style: a11y
+code-link: true
+height: 1080
+width: 1600
+execute: 
+  eval: true
+  echo: true
+---
+
+<h1> Outrageously efficient<br>exploratory data analysis </h1>
+
+<h2> with Apache Arrow and `dplyr` </h2>
+
+<hr>
+
+<h3> Tom Mock, Customer Enablement Lead at </h3>
+
+<h3> 2022-06-02 </h3>
+<br>
+
+<h3> `r fontawesome::fa("github", "black")` &nbsp; [github.com/jthomasmock/arrow-dplyr](https://github.com/jthomasmock/arrow-dplyr)
+
+![](https://arrow.apache.org/img/offbrand_hex_2.png){.absolute top=425 left=1100 width="300"}
+![](https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/dplyr.png){.absolute top=680 left=1250 width="300"}
+
+![](https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.png){.absolute top=360 left=965 height="65"}
+
+## {background-image="howard.jpg"}
+
+<!-- ![](howard.jpg){.absolute top=0 left=0 height="950" width=1700} -->

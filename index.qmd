@@ -8,6 +8,7 @@ format:
     code-copy: true
     center-title-slide: false
 highlight-style: a11y
+code-link: true
 height: 1080
 width: 1600
 execute: 
@@ -21,12 +22,17 @@ execute:
 
 <hr>
 
-<h3> Tom Mock, RStudio </h3>
+<h3> Tom Mock, Customer Enablement Lead at </h3>
 
-<h3> 2022-06-02 </h3>
+<h3> 2022-06-03 </h3>
 <br>
 
-<h3> `r fontawesome::fa("github", "black")` []()
+<h3> `r fontawesome::fa("github", "black")` &nbsp; [github.com/jthomasmock/arrow-dplyr](https://github.com/jthomasmock/arrow-dplyr)
+
+![](https://arrow.apache.org/img/offbrand_hex_2.png){.absolute top=425 left=1100 width="300"}
+![](https://raw.githubusercontent.com/rstudio/hex-stickers/master/PNG/dplyr.png){.absolute top=680 left=1250 width="300"}
+
+![](https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.png){.absolute top=360 left=965 height="65"}
 
 ## `arrow`
 
@@ -77,17 +83,17 @@ If it _can_ fit in memory, then try out:
 
 ## Fill your quiver with `arrow`s
 
-We're going to use a few libraries, `arrow` for efficient data analysis out of memory, `dplyr` to use as our interface, and `tictoc` to ~~watch cute dog videos~~ time our computations.
-
 ```{r}
 library(arrow)  # interface to arrow
 library(dplyr)  # expressive and consistent interface for data analysis
 library(tictoc) # timing out computations
 ```
 
-. . .
 
-:::: {.columns}
+[Using `tictoc` to [watch cute dog videos]{.fragment .strike fragment-index=2}]{.fragment fragment-index=1} [time our computations]{.fragment fragment-index=2}.
+
+
+:::: {.columns .fragment fragment-index=1}
 
 ::: {.column width="50%"}
 
@@ -297,7 +303,7 @@ all_comp <- ds |>
     .groups = "drop"
     ) |> 
   collect() |> 
-  mutate(total = sum(n))
+  mutate(total = scales::label_number(big.mark = ",")(sum(n)))
 toc()
 ```
 ```{r, echo=FALSE}
@@ -310,7 +316,7 @@ While `arrow` + `dplyr` can be combined for extremely efficient and fast data an
 
 . . .
 
-Enter the `arrow::to_duckdb()` function! This is essentially a zero-cost operation that will turn the on-disk result in place into a `duckdb` database!
+Enter the [`arrow::to_duckdb()` function](https://arrow.apache.org/docs/r/reference/to_duckdb.html)! This is essentially a zero-cost operation that will treat the on-disk data in place as a [`duckdb` database](https://duckdb.org/)!
 
 . . .
 
@@ -339,17 +345,18 @@ duck_out
 
 ```{r}
 ds |> 
-  select(posteam, play_type, season, defteam, epa) |> 
-  filter(!is.na(epa)) |> 
+  select(posteam, play_type, season, epa) |> 
+  filter(
+    !is.na(epa), 
+    play_type %in% c("run", "pass")) |> 
   to_duckdb() |> 
   filter(epa >= 0) 
 ```
 
-Note the:
 ```
 # Source:   lazy query [?? x 5]
 ```
-that indicates a `dbplyr` style connection where only the top 10 rows are printed and the entire returned dataset hasn't been pulled into memory yet!
+indicates a `dbplyr` connection, prints 10 rows and the remaining dataset hasn't been pulled into memory yet!
 
 :::
 
@@ -368,17 +375,18 @@ that indicates a `dbplyr` style connection where only the top 10 rows are printe
 
 ```{r}
 ds |> 
-  select(posteam, play_type, season, defteam, epa) |> 
-  filter(!is.na(epa)) |> 
+  select(posteam, play_type, season, epa) |> 
+  filter(
+    !is.na(epa), 
+    play_type %in% c("run", "pass")) |> 
   to_duckdb() |> 
   filter(epa >= 0) 
 ```
 
-Note the:
 ```
 # Source:   lazy query [?? x 5]
 ```
-that indicates a `dbplyr` style connection where only the top 10 rows are printed and the entire returned dataset hasn't been pulled into memory yet!
+indicates a `dbplyr` connection, prints 10 rows and the remaining dataset hasn't been pulled into memory yet!
 
 :::
 
@@ -386,11 +394,16 @@ that indicates a `dbplyr` style connection where only the top 10 rows are printe
 ::: {.column width="45%"}
 
 ```{r}
+#| code-line-numbers: "|9|10"
 ds |> 
-  select(posteam, play_type, season, defteam, epa) |> 
+  select(posteam, play_type, season, epa) |> 
   filter(!is.na(epa)) |> 
   to_duckdb() |> 
-  filter(epa >= 0) |> 
+  filter(
+    epa >= 0, 
+    play_type %in% c("run", "pass")
+    ) |> 
+  arrange(desc(epa)) |> 
   print(n = 22)
 ```
 
@@ -483,33 +496,20 @@ Once you have explored and want to bring it into memory, it's also fast!
 
 . . .
 
-Define some functions to run
-
 ```{r}
 read_arrow <- function(){
-  df <- arrow::open_dataset("data-parquet", partitioning = "season") |> filter(season == 2021) |> collect() 
-  dim(df)
+  dim(df <- arrow::open_dataset("data-parquet", partitioning = "season") |> filter(season == 2021) |> collect())
 } 
-read_dt <- function(){
-  df_dt <- data.table::fread("data-csv/2021.csv")
-  dim(df_dt)
-} 
-read_vroom <- function(){
-  dfv <- vroom::vroom("data-csv/2021.csv")
-  dim(dfv)
-} 
-read_csv_arrow <- function(){
-  dfc <- arrow::read_csv_arrow("data-csv/2021.csv")
-  dim(dfc)
-} 
+read_dt <- function() dim(df_dt <- data.table::fread("data-csv/2021.csv"))
+read_vroom <- function() dim(dfv <- vroom::vroom("data-csv/2021.csv"))
+read_csv_arrow <- function() dim(dfc <- arrow::read_csv_arrow("data-csv/2021.csv"))
+read_csv_readr <- function() dim(dfc <- readr::read_csv("data-csv/2021.csv", lazy = FALSE))
 ```
 
 . . .
 
-and evalute them
-
 ```{r, message=FALSE, warning=FALSE, cache=TRUE}
-tibble(dim = c("rows", "cols"), arrow = read_arrow(), dt = read_dt(), vroom = read_vroom(), arrow_csv = read_csv_arrow())
+tibble(dim = c("rows", "cols"), arrow = read_arrow(), dt = read_dt(), vroom = read_vroom(), arrow_csv = read_csv_arrow(), readr = read_csv_readr())
 ```
 
 ## We can `bench::mark()`
@@ -529,6 +529,7 @@ bench::mark(
   read_dt(),        # data.table::fread()
   read_vroom(),     # vroom::vroom()
   read_csv_arrow(), # arrow::read_arrow_csv()
+  read_csv_readr(), # readr::read_csv()
   min_time = 0.1, iterations = 10
 ) |> 
   arrange(median)
@@ -542,4 +543,8 @@ But again - the beauty of `arrow` is not just that it's fast!
 
 It's fast at exploring the data _BEFORE_ even having to wait for long reads OR having to get a workstation with enough memory to read it all in and compute on it!
 
+. . .
 
+So go out and use `arrow` + `dplyr` with `duckdb` for outrageously efficient exploratory data analysis!
+
+## {background-image="howard.jpg"}
