@@ -488,7 +488,7 @@ Tom Mock, Customer Enablement Lead at
 <span id="cb1-2"><a href="#cb1-2"></a><span class="fu">library</span>(dplyr)  <span class="co"># expressive and consistent interface for data analysis</span></span>
 <span id="cb1-3"><a href="#cb1-3"></a><span class="fu">library</span>(tictoc) <span class="co"># timing out computations</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><span class="fragment" data-fragment-index="1">Using <code>tictoc</code> to <span class="fragment strike" data-fragment-index="2">watch cute dog videos</span></span> <span class="fragment" data-fragment-index="2">time our computations</span>.</p>
+<p><span class="fragment" data-fragment-index="1">Using <code>tictoc</code> to <span class="fragment strike" data-fragment-index="2">watch cute dog videos</span></span> <span class="fragment" data-fragment-index="2">time our computations.</span></p>
 <div class="columns fragment" data-fragment-index="1">
 <div class="column" style="width:50%;">
 <p><img data-src="https://media0.giphy.com/media/EOIQA7mySTulzp7PoR/giphy.gif?cid=ecf05e47o0cq51yelvgpewdyud8ya013gejduf351z5233lq&amp;rid=giphy.gif&amp;ct=g" width="600"><img data-src="https://media4.giphy.com/media/DIrGyd84DwA48/giphy.gif?cid=ecf05e47977mxiw5gkfbd23znh0gxgra4kcqxa82c5e0laqs&amp;rid=giphy.gif&amp;ct=g" width="600"></p>
@@ -498,12 +498,12 @@ Tom Mock, Customer Enablement Lead at
 </div>
 </section><section id="on-to-arrow" class="slide level2"><h2>On to <code>arrow</code>
 </h2>
-<p>There are great examples of some basic data analysis on big data (2 billion rows) in the <a href="https://arrow.apache.org/docs/r/articles/dataset.html"><code>arrow</code> docs</a>.</p>
+<p>There are great examples of data analysis on big data (2 billion rows) in the <a href="https://arrow.apache.org/docs/r/articles/dataset.html"><code>arrow</code> docs</a>.</p>
 <div class="fragment">
 <p>For today, I’m going to focus on biggish data but manageable data!</p>
-<p><br></p>
 </div>
 <div class="fragment">
+<hr>
 <p>If we were to use CSVs, this would be about 2.19 GB of data</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>fs<span class="sc">::</span><span class="fu">dir_info</span>(<span class="st">"data-csv"</span>) <span class="sc">|&gt;</span> <span class="fu">summarise</span>(<span class="at">size =</span> <span class="fu">sum</span>(size)) <span class="sc">|&gt;</span> <span class="fu">pull</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -533,7 +533,7 @@ Tom Mock, Customer Enablement Lead at
 <span id="cb6-7"><a href="#cb6-7"></a>  )</span>
 <span id="cb6-8"><a href="#cb6-8"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0.201 sec elapsed</code></pre>
+<pre><code>0.193 sec elapsed</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1037,7 +1037,7 @@ See $.data for the source Arrow object</code></pre>
 </h2>
 <p>Once it’s pulled into memory, it’s like any other in-memory object!</p>
 <div class="fragment">
-<div class="cell" data-fig.dim="[8,3.5]">
+<div class="cell" data-layout-align="center" data-fig.dim="[8,3]">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="fu">library</span>(ggplot2)</span>
 <span id="cb17-2"><a href="#cb17-2"></a><span class="fu">collect</span>(summarize_df) <span class="sc">|&gt;</span> </span>
 <span id="cb17-3"><a href="#cb17-3"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> forcats<span class="sc">::</span><span class="fu">fct_reorder</span>(posteam, <span class="fu">desc</span>(avg_epa)), <span class="at">y =</span> avg_epa)) <span class="sc">+</span></span>
@@ -1048,7 +1048,10 @@ See $.data for the source Arrow object</code></pre>
 <span id="cb17-8"><a href="#cb17-8"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> nflplotR<span class="sc">::</span><span class="fu">element_nfl_logo</span>()) <span class="sc">+</span></span>
 <span id="cb17-9"><a href="#cb17-9"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">""</span>, <span class="at">y =</span> <span class="st">"Average Expected Points Added"</span>, <span class="at">title =</span> <span class="st">"2021 Offensive Expected Points Added"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img data-src="index_files/figure-revealjs/unnamed-chunk-8-1.png" width="2400"></p>
+<div class="quarto-figure quarto-figure-center">
+<figure><p><img data-src="index_files/figure-revealjs/unnamed-chunk-8-1.png" width="4000"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1068,7 +1071,7 @@ See $.data for the source Arrow object</code></pre>
 <span id="cb18-11"><a href="#cb18-11"></a>  <span class="fu">mutate</span>(<span class="at">total =</span> scales<span class="sc">::</span><span class="fu">label_number</span>(<span class="at">big.mark =</span> <span class="st">","</span>)(<span class="fu">sum</span>(n)))</span>
 <span id="cb18-12"><a href="#cb18-12"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0.149 sec elapsed</code></pre>
+<pre><code>0.137 sec elapsed</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1076,16 +1079,16 @@ See $.data for the source Arrow object</code></pre>
 <pre><code># A tibble: 325 × 5
    posteam play_type       n  avg_epa total    
    &lt;chr&gt;   &lt;chr&gt;       &lt;int&gt;    &lt;dbl&gt; &lt;chr&gt;    
- 1 ARI     no_play      1917 -0.0149  1,080,552
- 2 ARI     kickoff      1961  0.195   1,080,552
- 3 ARI     run          9181 -0.103   1,080,552
- 4 ARI     pass        14413 -0.0565  1,080,552
- 5 ARI     punt         1899 -0.0996  1,080,552
- 6 NYG     run         10082 -0.0739  1,080,552
- 7 NYG     pass        14290  0.00194 1,080,552
- 8 NYG     punt         1863 -0.0741  1,080,552
- 9 NYG     no_play      2032 -0.0130  1,080,552
-10 NYG     extra_point   837  0.00554 1,080,552
+ 1 PHI     kickoff      1885  0.243   1,080,552
+ 2 PHI     pass        14960  0.0106  1,080,552
+ 3 PHI     run         10326 -0.0146  1,080,552
+ 4 PHI     no_play      1948 -0.0317  1,080,552
+ 5 PHI     punt         1888 -0.0103  1,080,552
+ 6 ARI     run          9181 -0.103   1,080,552
+ 7 ARI     pass        14413 -0.0565  1,080,552
+ 8 ARI     punt         1899 -0.0996  1,080,552
+ 9 PHI     extra_point   958  0.00754 1,080,552
+10 ARI     kickoff      1961  0.195   1,080,552
 # … with 315 more rows</code></pre>
 </div>
 </div>
@@ -1104,7 +1107,7 @@ See $.data for the source Arrow object</code></pre>
 <span id="cb21-6"><a href="#cb21-6"></a>  <span class="fu">filter</span>(epa <span class="sc">&gt;=</span> <span class="dv">0</span>) </span>
 <span id="cb21-7"><a href="#cb21-7"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0.266 sec elapsed</code></pre>
+<pre><code>0.302 sec elapsed</code></pre>
 </div>
 </div>
 <div class="cell">
@@ -1156,8 +1159,7 @@ See $.data for the source Arrow object</code></pre>
 # … with more rows</code></pre>
 </div>
 </div>
-<pre><code># Source:   lazy query [?? x 5]</code></pre>
-<p>indicates a <code>dbplyr</code> connection, prints 10 rows and the remaining dataset hasn’t been pulled into memory yet!</p>
+<p><code>lazy query [?? x 4]</code> indicates a <code>dbplyr</code> connection, prints 10 rows and the remaining dataset hasn’t been pulled into memory yet!</p>
 </div><div class="column" style="width:45%;">
 
 </div>
@@ -1166,13 +1168,13 @@ See $.data for the source Arrow object</code></pre>
 <div class="columns">
 <div class="column" style="width:45%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1"></a>ds <span class="sc">|&gt;</span> </span>
-<span id="cb27-2"><a href="#cb27-2"></a>  <span class="fu">select</span>(posteam, play_type, season, epa) <span class="sc">|&gt;</span> </span>
-<span id="cb27-3"><a href="#cb27-3"></a>  <span class="fu">filter</span>(</span>
-<span id="cb27-4"><a href="#cb27-4"></a>    <span class="sc">!</span><span class="fu">is.na</span>(epa), </span>
-<span id="cb27-5"><a href="#cb27-5"></a>    play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"run"</span>, <span class="st">"pass"</span>)) <span class="sc">|&gt;</span> </span>
-<span id="cb27-6"><a href="#cb27-6"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb27-7"><a href="#cb27-7"></a>  <span class="fu">filter</span>(epa <span class="sc">&gt;=</span> <span class="dv">0</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1"></a>ds <span class="sc">|&gt;</span> </span>
+<span id="cb26-2"><a href="#cb26-2"></a>  <span class="fu">select</span>(posteam, play_type, season, epa) <span class="sc">|&gt;</span> </span>
+<span id="cb26-3"><a href="#cb26-3"></a>  <span class="fu">filter</span>(</span>
+<span id="cb26-4"><a href="#cb26-4"></a>    <span class="sc">!</span><span class="fu">is.na</span>(epa), </span>
+<span id="cb26-5"><a href="#cb26-5"></a>    play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"run"</span>, <span class="st">"pass"</span>)) <span class="sc">|&gt;</span> </span>
+<span id="cb26-6"><a href="#cb26-6"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb26-7"><a href="#cb26-7"></a>  <span class="fu">filter</span>(epa <span class="sc">&gt;=</span> <span class="dv">0</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   lazy query [?? x 4]
 # Database: duckdb_connection
@@ -1195,16 +1197,16 @@ See $.data for the source Arrow object</code></pre>
 <p>indicates a <code>dbplyr</code> connection, prints 10 rows and the remaining dataset hasn’t been pulled into memory yet!</p>
 </div><div class="column" style="width:45%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb30" data-code-line-numbers="|9|10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1"></a>ds <span class="sc">|&gt;</span> </span>
-<span id="cb30-2"><a href="#cb30-2"></a>  <span class="fu">select</span>(posteam, play_type, season, epa) <span class="sc">|&gt;</span> </span>
-<span id="cb30-3"><a href="#cb30-3"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(epa)) <span class="sc">|&gt;</span> </span>
-<span id="cb30-4"><a href="#cb30-4"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb30-5"><a href="#cb30-5"></a>  <span class="fu">filter</span>(</span>
-<span id="cb30-6"><a href="#cb30-6"></a>    epa <span class="sc">&gt;=</span> <span class="dv">0</span>, </span>
-<span id="cb30-7"><a href="#cb30-7"></a>    play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"run"</span>, <span class="st">"pass"</span>)</span>
-<span id="cb30-8"><a href="#cb30-8"></a>    ) <span class="sc">|&gt;</span> </span>
-<span id="cb30-9"><a href="#cb30-9"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(epa)) <span class="sc">|&gt;</span> </span>
-<span id="cb30-10"><a href="#cb30-10"></a>  <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">22</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29" data-code-line-numbers="|9|10"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1"></a>ds <span class="sc">|&gt;</span> </span>
+<span id="cb29-2"><a href="#cb29-2"></a>  <span class="fu">select</span>(posteam, play_type, season, epa) <span class="sc">|&gt;</span> </span>
+<span id="cb29-3"><a href="#cb29-3"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(epa)) <span class="sc">|&gt;</span> </span>
+<span id="cb29-4"><a href="#cb29-4"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb29-5"><a href="#cb29-5"></a>  <span class="fu">filter</span>(</span>
+<span id="cb29-6"><a href="#cb29-6"></a>    epa <span class="sc">&gt;=</span> <span class="dv">0</span>, </span>
+<span id="cb29-7"><a href="#cb29-7"></a>    play_type <span class="sc">%in%</span> <span class="fu">c</span>(<span class="st">"run"</span>, <span class="st">"pass"</span>)</span>
+<span id="cb29-8"><a href="#cb29-8"></a>    ) <span class="sc">|&gt;</span> </span>
+<span id="cb29-9"><a href="#cb29-9"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(epa)) <span class="sc">|&gt;</span> </span>
+<span id="cb29-10"><a href="#cb29-10"></a>  <span class="fu">print</span>(<span class="at">n =</span> <span class="dv">22</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:     lazy query [?? x 4]
 # Database:   duckdb_connection
@@ -1243,12 +1245,12 @@ See $.data for the source Arrow object</code></pre>
 <p>Just like with <code>dplyr</code> in memory, you can write and answer queries almost as fast as you can think them up!</p>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1"></a><span class="fu">tic</span>()</span>
-<span id="cb32-2"><a href="#cb32-2"></a>ds <span class="sc">|&gt;</span> </span>
-<span id="cb32-3"><a href="#cb32-3"></a>  <span class="fu">select</span>(posteam, play_type, season, defteam, epa) <span class="sc">|&gt;</span> </span>
-<span id="cb32-4"><a href="#cb32-4"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(epa)) <span class="sc">|&gt;</span> </span>
-<span id="cb32-5"><a href="#cb32-5"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb32-6"><a href="#cb32-6"></a>  <span class="fu">filter</span>(epa <span class="sc">&gt;=</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1"></a><span class="fu">tic</span>()</span>
+<span id="cb31-2"><a href="#cb31-2"></a>ds <span class="sc">|&gt;</span> </span>
+<span id="cb31-3"><a href="#cb31-3"></a>  <span class="fu">select</span>(posteam, play_type, season, defteam, epa) <span class="sc">|&gt;</span> </span>
+<span id="cb31-4"><a href="#cb31-4"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(epa)) <span class="sc">|&gt;</span> </span>
+<span id="cb31-5"><a href="#cb31-5"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb31-6"><a href="#cb31-6"></a>  <span class="fu">filter</span>(epa <span class="sc">&gt;=</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   lazy query [?? x 5]
 # Database: duckdb_connection
@@ -1266,9 +1268,9 @@ See $.data for the source Arrow object</code></pre>
 10 LV      pass        1999 GB       5.15
 # … with more rows</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1"></a><span class="fu">toc</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0.102 sec elapsed</code></pre>
+<pre><code>0.105 sec elapsed</code></pre>
 </div>
 </div>
 </div>
@@ -1278,11 +1280,11 @@ See $.data for the source Arrow object</code></pre>
 <div class="columns">
 <div class="column" style="width:45%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1"></a>ds <span class="sc">|&gt;</span> </span>
-<span id="cb36-2"><a href="#cb36-2"></a>  <span class="fu">select</span>(posteam, play_type, epa) <span class="sc">|&gt;</span></span>
-<span id="cb36-3"><a href="#cb36-3"></a>  <span class="fu">mutate</span>(<span class="at">total_n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb36-4"><a href="#cb36-4"></a>  <span class="fu">group_by</span>(posteam) <span class="sc">|&gt;</span> </span>
-<span id="cb36-5"><a href="#cb36-5"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">total =</span> <span class="fu">min</span>(total_n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1"></a>ds <span class="sc">|&gt;</span> </span>
+<span id="cb35-2"><a href="#cb35-2"></a>  <span class="fu">select</span>(posteam, play_type, epa) <span class="sc">|&gt;</span></span>
+<span id="cb35-3"><a href="#cb35-3"></a>  <span class="fu">mutate</span>(<span class="at">total_n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb35-4"><a href="#cb35-4"></a>  <span class="fu">group_by</span>(posteam) <span class="sc">|&gt;</span> </span>
+<span id="cb35-5"><a href="#cb35-5"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">total =</span> <span class="fu">min</span>(total_n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
 <pre><code>Error: window functions not currently supported in Arrow
 Call collect() first to pull data into R.</code></pre>
@@ -1296,11 +1298,11 @@ Call collect() first to pull data into R.</code></pre>
 <div class="columns">
 <div class="column" style="width:45%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1"></a>ds <span class="sc">|&gt;</span> </span>
-<span id="cb38-2"><a href="#cb38-2"></a>  <span class="fu">select</span>(posteam, play_type, epa) <span class="sc">|&gt;</span></span>
-<span id="cb38-3"><a href="#cb38-3"></a>  <span class="fu">mutate</span>(<span class="at">total_n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb38-4"><a href="#cb38-4"></a>  <span class="fu">group_by</span>(posteam) <span class="sc">|&gt;</span> </span>
-<span id="cb38-5"><a href="#cb38-5"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">total =</span> <span class="fu">min</span>(total_n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1"></a>ds <span class="sc">|&gt;</span> </span>
+<span id="cb37-2"><a href="#cb37-2"></a>  <span class="fu">select</span>(posteam, play_type, epa) <span class="sc">|&gt;</span></span>
+<span id="cb37-3"><a href="#cb37-3"></a>  <span class="fu">mutate</span>(<span class="at">total_n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb37-4"><a href="#cb37-4"></a>  <span class="fu">group_by</span>(posteam) <span class="sc">|&gt;</span> </span>
+<span id="cb37-5"><a href="#cb37-5"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">total =</span> <span class="fu">min</span>(total_n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
 <pre><code>Error: window functions not currently supported in Arrow
 Call collect() first to pull data into R.</code></pre>
@@ -1308,27 +1310,27 @@ Call collect() first to pull data into R.</code></pre>
 </div>
 </div><div class="column" style="width:45%;">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb40" data-code-line-numbers="|3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1"></a>ds <span class="sc">|&gt;</span> </span>
-<span id="cb40-2"><a href="#cb40-2"></a>  <span class="fu">select</span>(posteam, play_type, epa) <span class="sc">|&gt;</span></span>
-<span id="cb40-3"><a href="#cb40-3"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb40-4"><a href="#cb40-4"></a>  <span class="fu">mutate</span>(<span class="at">total_n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
-<span id="cb40-5"><a href="#cb40-5"></a>  <span class="fu">group_by</span>(posteam) <span class="sc">|&gt;</span> </span>
-<span id="cb40-6"><a href="#cb40-6"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">total =</span> <span class="fu">min</span>(total_n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb39" data-code-line-numbers="|3"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1"></a>ds <span class="sc">|&gt;</span> </span>
+<span id="cb39-2"><a href="#cb39-2"></a>  <span class="fu">select</span>(posteam, play_type, epa) <span class="sc">|&gt;</span></span>
+<span id="cb39-3"><a href="#cb39-3"></a>  <span class="fu">to_duckdb</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb39-4"><a href="#cb39-4"></a>  <span class="fu">mutate</span>(<span class="at">total_n =</span> <span class="fu">n</span>()) <span class="sc">|&gt;</span> </span>
+<span id="cb39-5"><a href="#cb39-5"></a>  <span class="fu">group_by</span>(posteam) <span class="sc">|&gt;</span> </span>
+<span id="cb39-6"><a href="#cb39-6"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">total =</span> <span class="fu">min</span>(total_n))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># Source:   lazy query [?? x 3]
 # Database: duckdb_connection
    posteam     n   total
    &lt;chr&gt;   &lt;dbl&gt;   &lt;dbl&gt;
- 1 ARI     31599 1098570
- 2 NYG     32451 1098570
- 3 &lt;NA&gt;    74782 1098570
- 4 PIT     33200 1098570
- 5 BAL     33702 1098570
- 6 WAS     31409 1098570
- 7 CAR     31744 1098570
- 8 MIN     31931 1098570
- 9 CHI     31278 1098570
-10 LA      32518 1098570
+ 1 &lt;NA&gt;    74782 1098570
+ 2 BUF     31058 1098570
+ 3 CHI     31278 1098570
+ 4 CAR     31744 1098570
+ 5 TB      31902 1098570
+ 6 CIN     31799 1098570
+ 7 BAL     33702 1098570
+ 8 PIT     33200 1098570
+ 9 CLE     30074 1098570
+10 GB      33418 1098570
 # … with more rows</code></pre>
 </div>
 </div>
@@ -1341,18 +1343,18 @@ Call collect() first to pull data into R.</code></pre>
 </div>
 <div class="fragment">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a>read_arrow <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
-<span id="cb42-2"><a href="#cb42-2"></a>  <span class="fu">dim</span>(df <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">open_dataset</span>(<span class="st">"data-parquet"</span>, <span class="at">partitioning =</span> <span class="st">"season"</span>) <span class="sc">|&gt;</span> <span class="fu">filter</span>(season <span class="sc">==</span> <span class="dv">2021</span>) <span class="sc">|&gt;</span> <span class="fu">collect</span>())</span>
-<span id="cb42-3"><a href="#cb42-3"></a>} </span>
-<span id="cb42-4"><a href="#cb42-4"></a>read_dt <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">dim</span>(df_dt <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="st">"data-csv/2021.csv"</span>))</span>
-<span id="cb42-5"><a href="#cb42-5"></a>read_vroom <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">dim</span>(dfv <span class="ot">&lt;-</span> vroom<span class="sc">::</span><span class="fu">vroom</span>(<span class="st">"data-csv/2021.csv"</span>))</span>
-<span id="cb42-6"><a href="#cb42-6"></a>read_csv_arrow <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">dim</span>(dfc <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"data-csv/2021.csv"</span>))</span>
-<span id="cb42-7"><a href="#cb42-7"></a>read_csv_readr <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">dim</span>(dfc <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data-csv/2021.csv"</span>, <span class="at">lazy =</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1"></a>read_arrow <span class="ot">&lt;-</span> <span class="cf">function</span>(){</span>
+<span id="cb41-2"><a href="#cb41-2"></a>  <span class="fu">dim</span>(df <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">open_dataset</span>(<span class="st">"data-parquet"</span>, <span class="at">partitioning =</span> <span class="st">"season"</span>) <span class="sc">|&gt;</span> <span class="fu">filter</span>(season <span class="sc">==</span> <span class="dv">2021</span>) <span class="sc">|&gt;</span> <span class="fu">collect</span>())</span>
+<span id="cb41-3"><a href="#cb41-3"></a>} </span>
+<span id="cb41-4"><a href="#cb41-4"></a>read_dt <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">dim</span>(df_dt <span class="ot">&lt;-</span> data.table<span class="sc">::</span><span class="fu">fread</span>(<span class="st">"data-csv/2021.csv"</span>))</span>
+<span id="cb41-5"><a href="#cb41-5"></a>read_vroom <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">dim</span>(dfv <span class="ot">&lt;-</span> vroom<span class="sc">::</span><span class="fu">vroom</span>(<span class="st">"data-csv/2021.csv"</span>))</span>
+<span id="cb41-6"><a href="#cb41-6"></a>read_csv_arrow <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">dim</span>(dfc <span class="ot">&lt;-</span> arrow<span class="sc">::</span><span class="fu">read_csv_arrow</span>(<span class="st">"data-csv/2021.csv"</span>))</span>
+<span id="cb41-7"><a href="#cb41-7"></a>read_csv_readr <span class="ot">&lt;-</span> <span class="cf">function</span>() <span class="fu">dim</span>(dfc <span class="ot">&lt;-</span> readr<span class="sc">::</span><span class="fu">read_csv</span>(<span class="st">"data-csv/2021.csv"</span>, <span class="at">lazy =</span> <span class="cn">FALSE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div class="fragment">
 <div class="cell" data-hash="index_cache/revealjs/unnamed-chunk-21_2aab7a8fdd4cf8c099a5b120a07d31ff">
-<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1"></a><span class="fu">tibble</span>(<span class="at">dim =</span> <span class="fu">c</span>(<span class="st">"rows"</span>, <span class="st">"cols"</span>), <span class="at">arrow =</span> <span class="fu">read_arrow</span>(), <span class="at">dt =</span> <span class="fu">read_dt</span>(), <span class="at">vroom =</span> <span class="fu">read_vroom</span>(), <span class="at">arrow_csv =</span> <span class="fu">read_csv_arrow</span>(), <span class="at">readr =</span> <span class="fu">read_csv_readr</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1"></a><span class="fu">tibble</span>(<span class="at">dim =</span> <span class="fu">c</span>(<span class="st">"rows"</span>, <span class="st">"cols"</span>), <span class="at">arrow =</span> <span class="fu">read_arrow</span>(), <span class="at">dt =</span> <span class="fu">read_dt</span>(), <span class="at">vroom =</span> <span class="fu">read_vroom</span>(), <span class="at">arrow_csv =</span> <span class="fu">read_csv_arrow</span>(), <span class="at">readr =</span> <span class="fu">read_csv_readr</span>())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 2 × 6
   dim   arrow    dt vroom arrow_csv readr
@@ -1369,15 +1371,15 @@ Call collect() first to pull data into R.</code></pre>
 </div>
 <p>All are pretty fast!</p>
 <div class="cell" data-hash="index_cache/revealjs/unnamed-chunk-23_8d799a2f88bb5c69dfcb0b66094b66c7">
-<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
-<span id="cb45-2"><a href="#cb45-2"></a>  <span class="fu">read_arrow</span>(),     <span class="co"># arrow::open_dataset()</span></span>
-<span id="cb45-3"><a href="#cb45-3"></a>  <span class="fu">read_dt</span>(),        <span class="co"># data.table::fread()</span></span>
-<span id="cb45-4"><a href="#cb45-4"></a>  <span class="fu">read_vroom</span>(),     <span class="co"># vroom::vroom()</span></span>
-<span id="cb45-5"><a href="#cb45-5"></a>  <span class="fu">read_csv_arrow</span>(), <span class="co"># arrow::read_arrow_csv()</span></span>
-<span id="cb45-6"><a href="#cb45-6"></a>  <span class="fu">read_csv_readr</span>(), <span class="co"># readr::read_csv()</span></span>
-<span id="cb45-7"><a href="#cb45-7"></a>  <span class="at">min_time =</span> <span class="fl">0.1</span>, <span class="at">iterations =</span> <span class="dv">10</span></span>
-<span id="cb45-8"><a href="#cb45-8"></a>) <span class="sc">|&gt;</span> </span>
-<span id="cb45-9"><a href="#cb45-9"></a>  <span class="fu">arrange</span>(median)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1"></a>bench<span class="sc">::</span><span class="fu">mark</span>(</span>
+<span id="cb44-2"><a href="#cb44-2"></a>  <span class="fu">read_arrow</span>(),     <span class="co"># arrow::open_dataset()</span></span>
+<span id="cb44-3"><a href="#cb44-3"></a>  <span class="fu">read_dt</span>(),        <span class="co"># data.table::fread()</span></span>
+<span id="cb44-4"><a href="#cb44-4"></a>  <span class="fu">read_vroom</span>(),     <span class="co"># vroom::vroom()</span></span>
+<span id="cb44-5"><a href="#cb44-5"></a>  <span class="fu">read_csv_arrow</span>(), <span class="co"># arrow::read_arrow_csv()</span></span>
+<span id="cb44-6"><a href="#cb44-6"></a>  <span class="fu">read_csv_readr</span>(), <span class="co"># readr::read_csv()</span></span>
+<span id="cb44-7"><a href="#cb44-7"></a>  <span class="at">min_time =</span> <span class="fl">0.1</span>, <span class="at">iterations =</span> <span class="dv">10</span></span>
+<span id="cb44-8"><a href="#cb44-8"></a>) <span class="sc">|&gt;</span> </span>
+<span id="cb44-9"><a href="#cb44-9"></a>  <span class="fu">arrange</span>(median)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 5 × 6
   expression            min   median `itr/sec` mem_alloc `gc/sec`
@@ -1398,7 +1400,7 @@ Call collect() first to pull data into R.</code></pre>
 <div class="fragment">
 <p>So go out and use <code>arrow</code> + <code>dplyr</code> with <code>duckdb</code> for outrageously efficient exploratory data analysis!</p>
 </div>
-</section><section id="section" class="slide level2" data-background-image="howard.jpg"><h2></h2>
+</section><section id="section" class="slide level2" data-background-image="howard.jpg" data-background-size="contain"><h2></h2>
 
 <img src="https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.png" class="slide-logo r-stretch"><div class="footer footer-default">
 <p><a href="https://jthomasmock.github.io/arrow-dplyr">https://jthomasmock.github.io/arrow-dplyr</a></p>
@@ -1565,7 +1567,7 @@ Call collect() first to pull data into R.</code></pre>
         // The "normal" size of the presentation, aspect ratio will be preserved
         // when the presentation is scaled to fit different resolutions. Can be
         // specified using percentage units.
-        width: 1600,
+        width: 1920,
 
         height: 1080,
 

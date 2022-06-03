@@ -8,10 +8,11 @@ format:
     code-copy: true
     center-title-slide: false
     include-in-header: heading-meta.html
-highlight-style: a11y
-code-link: true
-height: 1080
-width: 1600
+    code-link: true
+    code-overflow: wrap
+    highlight-style: a11y
+    height: 1080
+    width: 1920
 execute: 
   eval: true
   echo: true
@@ -91,7 +92,7 @@ library(tictoc) # timing out computations
 ```
 
 
-[Using `tictoc` to [watch cute dog videos]{.fragment .strike fragment-index=2}]{.fragment fragment-index=1} [time our computations]{.fragment fragment-index=2}.
+[Using `tictoc` to [watch cute dog videos]{.fragment .strike fragment-index=2}]{.fragment fragment-index=1} [time our computations.]{.fragment fragment-index=2}
 
 
 :::: {.columns .fragment fragment-index=1}
@@ -112,15 +113,15 @@ library(tictoc) # timing out computations
 
 ## On to `arrow`
 
-There are great examples of some basic data analysis on big data (2 billion rows) in the [`arrow` docs](https://arrow.apache.org/docs/r/articles/dataset.html). 
+There are great examples of data analysis on big data (2 billion rows) in the [`arrow` docs](https://arrow.apache.org/docs/r/articles/dataset.html). 
 
 . . .
 
 For today, I'm going to focus on biggish data but manageable data!
 
-<br>
-
 . . .
+
+<hr>
 
 If we were to use CSVs, this would be about 2.19 GB of data
 
@@ -277,7 +278,7 @@ Once it's pulled into memory, it's like any other in-memory object!
 
 . . .
 
-```{r, fig.dim=c(8,3.5), dpi=300}
+```{r, fig.dim=c(8,3), dpi=500, fig.align='center'}
 library(ggplot2)
 collect(summarize_df) |> 
   ggplot(aes(x = forcats::fct_reorder(posteam, desc(avg_epa)), y = avg_epa)) +
@@ -354,10 +355,8 @@ ds |>
   filter(epa >= 0) 
 ```
 
-```
-# Source:   lazy query [?? x 5]
-```
-indicates a `dbplyr` connection, prints 10 rows and the remaining dataset hasn't been pulled into memory yet!
+
+`lazy query [?? x 4]` indicates a `dbplyr` connection, prints 10 rows and the remaining dataset hasn't been pulled into memory yet!
 
 :::
 
@@ -548,4 +547,4 @@ It's fast at exploring the data _BEFORE_ even having to wait for long reads OR h
 
 So go out and use `arrow` + `dplyr` with `duckdb` for outrageously efficient exploratory data analysis!
 
-## {background-image="howard.jpg"}
+## {background-image="howard.jpg" background-size="contain"}
