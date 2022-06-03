@@ -1,0 +1,545 @@
+---
+format: 
+  revealjs:
+    theme: ["theme/q-theme.scss"]
+    slide-number: c/t
+    logo: "https://www.rstudio.com/wp-content/uploads/2018/10/RStudio-Logo-Flat.png"
+    footer: "[https://jthomasmock.github.io/arrow-dplyr](https://jthomasmock.github.io/arrow-dplyr)"
+    code-copy: true
+    center-title-slide: false
+highlight-style: a11y
+height: 1080
+width: 1600
+execute: 
+  eval: true
+  echo: true
+---
+
+<h1> Outrageously efficient<br>exploratory data analysis </h1>
+
+<h2> with Apache Arrow and `dplyr` </h2>
+
+<hr>
+
+<h3> Tom Mock, RStudio </h3>
+
+<h3> 2022-06-02 </h3>
+<br>
+
+<h3> `r fontawesome::fa("github", "black")` []()
+
+## `arrow`
+
+> `arrow` is software development platform for building high performance applications that process and transport large data sets  
+
+. . .
+
+* The `arrow` R package is an interface to data via the `arrow` backend, and has deep integration with `dplyr`:  
+  - Ungrouped `mutate()`, `filter()`, `select()` was available in `arrow` 5.0  
+  - `group_by()` + `summarize()` aggregation was added in `arrow` 6.0  
+  - More complex `dplyr` operations were added in `arrow`7.0 and 8.0
+  
+. . .
+
+* `arrow` data can also be "handed off" to `duckdb` with `to_duckdb()` for any `dbplyr` commands without data conversion. IE no serialization or data copying costs are incurred. 
+
+## Working with bigger data?
+
+* Relational databases (IE SQL) are still around and hugely popular but...  
+
+. . .
+
+* Data and specifically _local_ files are getting bigger  
+
+. . .
+
+* Additionally, many Data Warehouses/Data Lakes use flat-file storage (`.csv`, `.parquet`, `.json` etc) - there are query engines in many environments, but you can often end up with large extracts.
+
+. . .
+
+So, how do you work with data extracts that aren't already in a database, and are bigger than your memory?
+
+## Pause for one second
+
+If it _can_ fit in memory, then try out:  
+
+* [`vroom::vroom()`](https://vroom.r-lib.org/) or [`data.table::fread()`](https://rdatatable.gitlab.io/data.table/reference/fread.html) for fast file reads _into_ R  
+  * [`vroom(col_select = c(column_name))`](https://vroom.r-lib.org/reference/vroom.html) also allows for partial reads (ie specific columns)  
+  * `arrow` itself also has crazy fast file reads on many file types
+
+. . .
+
+* [`data.table`](https://rdatatable.gitlab.io/data.table/index.html) or the `dplyr` front-end to `data.table` via [`dtplyr`](https://dtplyr.tidyverse.org/) for fast and efficient in-memory analysis  
+
+. . .
+
+* Lastly, the [`collapse`](https://sebkrantz.github.io/collapse/) R package for limited capability, but hyper-performant data manipulation  
+
+## Fill your quiver with `arrow`s
+
+We're going to use a few libraries, `arrow` for efficient data analysis out of memory, `dplyr` to use as our interface, and `tictoc` to ~~watch cute dog videos~~ time our computations.
+
+```{r}
+library(arrow)  # interface to arrow
+library(dplyr)  # expressive and consistent interface for data analysis
+library(tictoc) # timing out computations
+```
+
+. . .
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+![](https://media0.giphy.com/media/EOIQA7mySTulzp7PoR/giphy.gif?cid=ecf05e47o0cq51yelvgpewdyud8ya013gejduf351z5233lq&rid=giphy.gif&ct=g){width="600"}
+![](https://media4.giphy.com/media/DIrGyd84DwA48/giphy.gif?cid=ecf05e47977mxiw5gkfbd23znh0gxgra4kcqxa82c5e0laqs&rid=giphy.gif&ct=g){width="600"}
+
+:::
+
+::: {.column width="50%"}
+![](https://media0.giphy.com/media/348lrWhJAUiuhkcePl/giphy.gif?cid=ecf05e476kk82d9kk7u3rub2wec0qpz2c32kxt2504hf1p7v&rid=giphy.gif&ct=g){width="600"}
+![](https://media4.giphy.com/media/OVz2F93KQzSqQ/giphy.gif?cid=ecf05e476kk82d9kk7u3rub2wec0qpz2c32kxt2504hf1p7v&rid=giphy.gif&ct=g){width="600"}
+:::
+
+::::
+
+## On to `arrow`
+
+There are great examples of some basic data analysis on big data (2 billion rows) in the [`arrow` docs](https://arrow.apache.org/docs/r/articles/dataset.html). 
+
+. . .
+
+For today, I'm going to focus on biggish data but manageable data!
+
+<br>
+
+. . .
+
+If we were to use CSVs, this would be about 2.19 GB of data
+
+```{r}
+fs::dir_info("data-csv") |> summarise(size = sum(size)) |> pull()
+```
+
+. . .
+
+But because we're using `arrow`, we can use more efficient parquet files. This data on disk is about 82% smaller at 388 MB.
+
+```{r}
+fs::dir_info("data-parquet", recurse = TRUE) |> summarise(size = sum(size)) |> pull()
+```
+
+. . .
+
+So not _THAT_ big but 372 columns and 1.1 million rows is plenty.
+
+```{r}
+tic()
+ds <- arrow::open_dataset("data-parquet", partitioning = "season")
+
+dims <- glue::glue(
+  "{ds |> names() |> length()} cols by ",
+  "{scales::label_number(big.mark = ',')(ds |> count() |> collect() |> pull())} rows"
+  )
+toc()
+```
+
+```{r, echo = FALSE}
+dims
+```
+
+
+## `nflfastR` data
+
+The data we're focused on today is big enough (1 million rows by 372 columns, about 2.2 GB uncompressed) and corresponds to _every_ NFL play in _every_ game from 1999 to 2021. The data is all available from the [{nflverse} Github](https://github.com/nflverse/nflfastR-data).
+
+. . .
+
+To use it efficiently, we've partitioned the data up into each season
+
+:::: {.columns}
+
+::: {.column width="50%"}
+
+```
+data-parquet/
+├── 1999
+│   └── data.parquet
+├── 2000
+│   └── data.parquet
+├── 2001
+│   └── data.parquet
+├── 2002
+│   └── data.parquet
+├── 2003
+│   └── data.parquet
+├── 2004
+│   └── data.parquet
+├── 2005
+│   └── data.parquet
+├── 2006
+│   └── data.parquet
+├── 2007
+│   └── data.parquet
+├── 2008
+│   └── data.parquet
+├── 2009
+│   └── data.parquet
+├── 2010
+│   └── data.parquet
+├── 2011
+│   └── data.parquet
+├── 2012
+│   └── data.parquet
+├── 2013
+│   └── data.parquet
+├── 2014
+│   └── data.parquet
+```
+
+:::
+
+::: {.column width="50%"}
+
+```
+
+├── 2015
+│   └── data.parquet
+├── 2016
+│   └── data.parquet
+├── 2017
+│   └── data.parquet
+├── 2018
+│   └── data.parquet
+├── 2019
+│   └── data.parquet
+├── 2020
+│   └── data.parquet
+└── 2021
+    └── data.parquet
+```
+
+:::
+
+::::
+
+## Nock the `arrow`
+
+We can prepare our data to be used with `arrow::open_dataset()`
+
+```{r}
+ds <- open_dataset("data-parquet", partitioning = "season")
+
+ds
+```
+
+## Pull the `arrow` back with `dplyr`
+
+```{r}
+#| code-line-numbers: "|8"
+summarize_df <- ds |> 
+  filter(season == 2021, play_type %in% c("pass", "run")) |> 
+  filter(!is.na(epa)) |> 
+  select(posteam, epa) |> 
+  group_by(posteam) |> 
+  summarize(n = n(), avg_epa = mean(epa))
+
+print(summarize_df)
+```
+
+. . .
+
+Note that while the computation has occurred, we really haven't "seen it" yet. Printing just reports back the 3x columns and their type.
+
+## Release the `arrow` into memory with `collect()`
+
+We can execute the `collect()` function to _finally_ pull the output into memory and display the result.
+
+. . .
+
+```{r collectArrange}
+#| code-line-numbers: "|2"
+summarize_df |> 
+  collect() |> 
+  arrange(desc(avg_epa))
+```
+
+## Release the `arrow` into memory with `collect()`
+
+Once it's pulled into memory, it's like any other in-memory object!
+
+. . .
+
+```{r, fig.dim=c(8,3.5), dpi=300}
+library(ggplot2)
+collect(summarize_df) |> 
+  ggplot(aes(x = forcats::fct_reorder(posteam, desc(avg_epa)), y = avg_epa)) +
+  theme_minimal() + geom_hline(yintercept = 0, color = "black") +
+  geom_col(aes(color = posteam, fill = posteam), width = 0.75) +
+  nflplotR::scale_fill_nfl(alpha = 0.75, aesthetics = c("color", "fill")) +
+  guides(color = "none", fill = "none") +
+  theme(axis.text.x = nflplotR::element_nfl_logo()) +
+  labs(x = "", y = "Average Expected Points Added", title = "2021 Offensive Expected Points Added")
+```
+
+## Bigger and faster
+
+We can operate across all the rows extremely quickly!
+
+```{r}
+tic()
+all_comp <- ds |> 
+  filter(!is.na(epa)) |> 
+  group_by(posteam, play_type) |> 
+  summarize(
+    n = n(), 
+    avg_epa = mean(epa),
+    .groups = "drop"
+    ) |> 
+  collect() |> 
+  mutate(total = sum(n))
+toc()
+```
+```{r, echo=FALSE}
+all_comp
+```
+
+## Better exploratory data analysis
+
+While `arrow` + `dplyr` can be combined for extremely efficient and fast data analysis, having to `collect()` into memory when the results may be very large is not ideal.
+
+. . .
+
+Enter the `arrow::to_duckdb()` function! This is essentially a zero-cost operation that will turn the on-disk result in place into a `duckdb` database!
+
+. . .
+
+
+```{r}
+tic()
+duck_out <- ds |> 
+  select(posteam, play_type, season, defteam, epa) |> 
+  filter(!is.na(epa)) |> 
+  to_duckdb() |> 
+  filter(epa >= 0) 
+toc()
+```
+
+```{r, echo=FALSE}
+duck_out
+```
+
+
+## More `arrow`s for more `duckdb`s
+
+:::: {.columns}
+
+::: {.column width="45%"}
+
+
+```{r}
+ds |> 
+  select(posteam, play_type, season, defteam, epa) |> 
+  filter(!is.na(epa)) |> 
+  to_duckdb() |> 
+  filter(epa >= 0) 
+```
+
+Note the:
+```
+# Source:   lazy query [?? x 5]
+```
+that indicates a `dbplyr` style connection where only the top 10 rows are printed and the entire returned dataset hasn't been pulled into memory yet!
+
+:::
+
+::: {.column width="45%"}
+
+:::
+
+::::
+
+## More `arrow`s for more `duckdb`s
+
+:::: {.columns}
+
+::: {.column width="45%"}
+
+
+```{r}
+ds |> 
+  select(posteam, play_type, season, defteam, epa) |> 
+  filter(!is.na(epa)) |> 
+  to_duckdb() |> 
+  filter(epa >= 0) 
+```
+
+Note the:
+```
+# Source:   lazy query [?? x 5]
+```
+that indicates a `dbplyr` style connection where only the top 10 rows are printed and the entire returned dataset hasn't been pulled into memory yet!
+
+:::
+
+
+::: {.column width="45%"}
+
+```{r}
+ds |> 
+  select(posteam, play_type, season, defteam, epa) |> 
+  filter(!is.na(epa)) |> 
+  to_duckdb() |> 
+  filter(epa >= 0) |> 
+  print(n = 22)
+```
+
+We can easily print more!
+
+:::
+
+::::
+
+
+
+## Rapid fire question -> answer
+
+Just like with `dplyr` in memory, you can write and answer queries almost as fast as you can think them up!
+
+. . .
+
+```{r}
+tic()
+ds |> 
+  select(posteam, play_type, season, defteam, epa) |> 
+  filter(!is.na(epa)) |> 
+  to_duckdb() |> 
+  filter(epa >= 5)
+toc()
+```
+
+## `duckdb` adds more options
+
+Note that it _also_ opens up additional functions via `dbplyr` that may not be added yet into `arrow`'s conversion layer.
+
+:::: {.columns}
+
+::: {.column width="45%"}
+
+```{r, error=TRUE}
+ds |> 
+  select(posteam, play_type, epa) |>
+  mutate(total_n = n()) |> 
+  group_by(posteam) |> 
+  summarize(n = n(), total = min(total_n))
+```
+
+:::
+
+::::
+
+## `duckdb` adds more options
+
+Note that it _also_ opens up additional functions via `dbplyr` that may not be added yet into `arrow`'s conversion layer.
+
+:::: {.columns}
+
+::: {.column width="45%"}
+
+```{r, error=TRUE}
+ds |> 
+  select(posteam, play_type, epa) |>
+  mutate(total_n = n()) |> 
+  group_by(posteam) |> 
+  summarize(n = n(), total = min(total_n))
+```
+
+:::
+
+
+::: {.column width="45%"}
+
+```{r, warning=FALSE}
+#| code-line-numbers: "|3"
+ds |> 
+  select(posteam, play_type, epa) |>
+  to_duckdb() |> 
+  mutate(total_n = n()) |> 
+  group_by(posteam) |> 
+  summarize(n = n(), total = min(total_n))
+```
+
+:::
+
+::::
+
+## All together now
+
+`dplyr`, `arrow`, and `duckdb` form a powerful trifecta for efficiently and effectively exploring large datasets.
+
+. . .
+
+Once you have explored and want to bring it into memory, it's also fast!
+
+. . .
+
+Define some functions to run
+
+```{r}
+read_arrow <- function(){
+  df <- arrow::open_dataset("data-parquet", partitioning = "season") |> filter(season == 2021) |> collect() 
+  dim(df)
+} 
+read_dt <- function(){
+  df_dt <- data.table::fread("data-csv/2021.csv")
+  dim(df_dt)
+} 
+read_vroom <- function(){
+  dfv <- vroom::vroom("data-csv/2021.csv")
+  dim(dfv)
+} 
+read_csv_arrow <- function(){
+  dfc <- arrow::read_csv_arrow("data-csv/2021.csv")
+  dim(dfc)
+} 
+```
+
+. . .
+
+and evalute them
+
+```{r, message=FALSE, warning=FALSE, cache=TRUE}
+tibble(dim = c("rows", "cols"), arrow = read_arrow(), dt = read_dt(), vroom = read_vroom(), arrow_csv = read_csv_arrow())
+```
+
+## We can `bench::mark()`
+
+```{r, eval=FALSE,echo=FALSE}
+read_arrow <- \() all_21_arrow <- ds |> filter(season == 2021) |> collect()
+read_dt <- \() all_21_dt <- data.table::fread("data-csv/2021.csv", nThread = 10)
+read_vroom <- \() all_21_dt <- vroom::vroom("data-csv/2021.csv")
+read_csv_arrow <- \() all_21_dt <- arrow::read_csv_arrow("data-csv/2021.csv")
+```
+
+All are pretty fast!
+
+```{r, cache=TRUE, message=FALSE, warning = FALSE}
+bench::mark(
+  read_arrow(),     # arrow::open_dataset()
+  read_dt(),        # data.table::fread()
+  read_vroom(),     # vroom::vroom()
+  read_csv_arrow(), # arrow::read_arrow_csv()
+  min_time = 0.1, iterations = 10
+) |> 
+  arrange(median)
+```
+
+. . .
+
+But again - the beauty of `arrow` is not just that it's fast!
+
+. . .
+
+It's fast at exploring the data _BEFORE_ even having to wait for long reads OR having to get a workstation with enough memory to read it all in and compute on it!
+
+
