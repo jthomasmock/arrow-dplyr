@@ -7,6 +7,7 @@ format:
     footer: "[https://jthomasmock.github.io/arrow-dplyr](https://jthomasmock.github.io/arrow-dplyr)"
     code-copy: true
     center-title-slide: false
+    include-in-header: heading-meta.html
 highlight-style: a11y
 code-link: true
 height: 1080
